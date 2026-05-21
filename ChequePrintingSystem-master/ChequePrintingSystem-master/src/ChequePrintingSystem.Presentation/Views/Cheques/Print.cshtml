@@ -1,0 +1,38 @@
+@model ChequePrintViewModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <style>
+        .cheque-canvas { width: 190mm; height: 85mm; border: 1px dashed #aaa; position: relative; margin: 10px auto; font-family: Arial, sans-serif; }
+        .field { position: absolute; }
+        .field-date {
+            letter-spacing: 0.95mm;
+            font-size: 12px;
+            white-space: nowrap;
+            line-height: 1;
+        }
+        .field-amount { min-width: 30mm; text-align: right; }
+        @@media print {
+            body { margin: 0; }
+            .cheque-canvas { border: 0; margin: 0 auto; }
+        }
+    </style>
+    @if (!string.IsNullOrWhiteSpace(Model.TemplateCss))
+    {
+        <style>@Model.TemplateCss</style>
+    }
+</head>
+<body>
+    <div class="cheque-canvas">
+        <div class="field field-date" style="left:@(Model.DateX)mm;top:@(Model.DateY)mm;">@Model.FormattedDate</div>
+        <div class="field" style="left:@(Model.PayeeX)mm;top:@(Model.PayeeY)mm;">@Model.PayeeName.ToUpperInvariant()</div>
+        <div class="field field-amount" style="left:@(Model.AmountNumericX)mm;top:@(Model.AmountNumericY)mm;">@Model.Amount.ToString("N2")</div>
+        <div class="field" style="left:@(Model.AmountWordsX)mm;top:@(Model.AmountWordsY)mm;">@Model.AmountInWords</div>
+    </div>
+    <script>window.print();</script>
+</body>
+</html>

@@ -1,0 +1,111 @@
+@model ChequeCreateViewModel
+@{
+    ViewData["Title"] = "Cheque Printing";
+}
+<div class="cheque-print-page">
+    <div class="cheque-print-header"></div>
+    <form method="post" enctype="multipart/form-data" class="cheque-print-form">
+        <div asp-validation-summary="All" class="text-danger mb-2"></div>
+        <div class="row g-3 align-items-end">
+            <div class="col-md-8"></div>
+            <div class="col-md-4">
+                <label class="form-label">Cheque Date</label>
+                <input class="form-control form-control-sm" asp-for="Date" type="date" />
+            </div>
+
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-end mb-1">
+                    <label class="form-label mb-0">Payee</label>
+                    <a class="small" asp-controller="Payees" asp-action="Create">Create New</a>
+                </div>
+                <select class="form-select" asp-for="PayeeId" asp-items="ViewBag.Payees"></select>
+            </div>
+
+            <div class="col-md-8">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <label class="form-label mb-0">Amount In Words</label>
+                    <div class="form-check">
+                        <input id="inWordsCaps" class="form-check-input" type="checkbox" checked />
+                        <label class="form-check-label small" for="inWordsCaps">InWords Caps</label>
+                    </div>
+                </div>
+                <textarea id="amountInWordsPreview" class="form-control" rows="3" readonly></textarea>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Amount</label>
+                <input id="amountInput" class="form-control" asp-for="Amount" />
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label">Cheque Number</label>
+                <input class="form-control" asp-for="ChequeNumber" />
+            </div>
+            <div class="col-md-7">
+                <label class="form-label">Description</label>
+                <input class="form-control" asp-for="Remarks" />
+            </div>
+            <div class="col-md-2 d-grid gap-2">
+                <button type="submit" name="submitAction" value="save" class="btn btn-primary">Save cheque</button>
+                <button type="submit" name="submitAction" value="print" class="btn btn-outline-primary">
+                    Save &amp; print
+                </button>
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label">Bank Account</label>
+                <select class="form-select" asp-for="BankAccountId" asp-items="ViewBag.Accounts"></select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Status</label>
+                <select class="form-select" asp-for="Status" asp-items="ViewBag.Statuses"></select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Attachment</label>
+                <input class="form-control" type="file" name="attachment" />
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        function convertBelowThousand(n) {
+            const ones = ["Zero","One","Two","Three","Four","Five","Six","Seven","Eight","Nine","Ten","Eleven","Twelve","Thirteen","Fourteen","Fifteen","Sixteen","Seventeen","Eighteen","Nineteen"];
+            const tens = ["","","Twenty","Thirty","Forty","Fifty","Sixty","Seventy","Eighty","Ninety"];
+            if (n < 20) return ones[n];
+            if (n < 100) return tens[Math.floor(n / 10)] + (n % 10 ? " " + ones[n % 10] : "");
+            return ones[Math.floor(n / 100)] + " Hundred" + (n % 100 ? " " + convertBelowThousand(n % 100) : "");
+        }
+
+        function convertToWords(amount) {
+            const value = Number(amount || 0);
+            if (!value) return "";
+            const rupees = Math.floor(value);
+            const paisa = Math.round((value - rupees) * 100);
+            let words = "";
+            const million = Math.floor(rupees / 1000000);
+            const thousand = Math.floor((rupees % 1000000) / 1000);
+            const below = rupees % 1000;
+            if (million) words += convertBelowThousand(million) + " Million ";
+            if (thousand) words += convertBelowThousand(thousand) + " Thousand ";
+            if (below || (!million && !thousand)) words += convertBelowThousand(below);
+            words = words.trim() + " Rupees";
+            if (paisa) words += " and " + convertBelowThousand(paisa) + " Paisa";
+            return words + " Only";
+        }
+
+        const amountInput = document.getElementById("amountInput");
+        const amountInWordsPreview = document.getElementById("amountInWordsPreview");
+        const inWordsCaps = document.getElementById("inWordsCaps");
+
+        function refreshWords() {
+            let text = convertToWords(amountInput.value);
+            if (inWordsCaps.checked) text = text.toUpperCase();
+            amountInWordsPreview.value = text;
+        }
+
+        amountInput.addEventListener("input", refreshWords);
+        inWordsCaps.addEventListener("change", refreshWords);
+        refreshWords();
+    </script>
+}

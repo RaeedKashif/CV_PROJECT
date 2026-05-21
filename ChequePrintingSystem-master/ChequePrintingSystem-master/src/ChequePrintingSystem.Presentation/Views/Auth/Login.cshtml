@@ -1,0 +1,24 @@
+@{
+    ViewData["Title"] = "Login";
+}
+<div class="row justify-content-center pt-4">
+    <div class="col-lg-5 col-md-7">
+        <div class="card login-card shadow-sm border-0">
+            <div class="card-body p-4 p-md-5">
+                <h3 class="fw-bold mb-2">Welcome back</h3>
+                <p class="text-secondary mb-4">Sign in to continue to your cheque management workspace.</p>
+                <form method="post" class="d-grid gap-3">
+                    <div>
+                        <label class="form-label">Email</label>
+                        <input class="form-control form-control-lg" name="email" type="email" required />
+                    </div>
+                    <div>
+                        <label class="form-label">Password</label>
+                        <input class="form-control form-control-lg" type="password" name="password" required />
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-lg">Sign In</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

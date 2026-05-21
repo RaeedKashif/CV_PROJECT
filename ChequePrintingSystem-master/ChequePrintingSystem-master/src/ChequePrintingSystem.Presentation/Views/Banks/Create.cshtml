@@ -1,0 +1,18 @@
+@model BankFormViewModel
+<h4>Create Bank</h4>
+<form method="post" class="row g-2">
+    <div class="col-md-6">
+        <label asp-for="Name"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <div class="col-md-6">
+        <label asp-for="SwiftCode"></label>
+        <input asp-for="SwiftCode" class="form-control" />
+        <span asp-validation-for="SwiftCode" class="text-danger"></span>
+    </div>
+    <div class="col-12">
+        <button class="btn btn-primary">Save</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+    </div>
+</form>

@@ -1,0 +1,166 @@
+@using ChequePrintingSystem.Domain.Enums
+@model ChequePrintingSystem.Presentation.Models.ChequeIndexViewModel
+@{
+    ViewData["Title"] = "Cheques";
+}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4>Cheques</h4>
+    <div>
+        <a asp-action="Create" class="btn btn-primary btn-sm">
+            <i class="bi bi-plus-circle me-1"></i>Create Cheque
+        </a>
+    </div>
+</div>
+@if (TempData["Message"] is string msg)
+{
+    <div class="alert alert-info">@msg</div>
+}
+
+<div class="card mb-3">
+    <div class="card-body">
+        <form asp-action="Index" method="get" class="row g-2 align-items-end">
+            <input type="hidden" name="Page" value="1" />
+            <div class="col-md-2">
+                <label class="form-label form-label-sm">From</label>
+                <input asp-for="FromDate" type="date" class="form-control form-control-sm" />
+            </div>
+            <div class="col-md-2">
+                <label class="form-label form-label-sm">To</label>
+                <input asp-for="ToDate" type="date" class="form-control form-control-sm" />
+            </div>
+            <div class="col-md-3">
+                <label class="form-label form-label-sm">Payee</label>
+                <input asp-for="PayeeName" class="form-control form-control-sm" placeholder="Search payee..." />
+            </div>
+            <div class="col-md-3">
+                <label class="form-label form-label-sm">Bank Account</label>
+                <input asp-for="BankAccountNumber" class="form-control form-control-sm" placeholder="Search account..." />
+            </div>
+            <div class="col-md-2">
+                <label class="form-label form-label-sm">Cheque #</label>
+                <input asp-for="ChequeNumber" class="form-control form-control-sm" placeholder="Optional..." />
+            </div>
+            <div class="col-md-2">
+                <label class="form-label form-label-sm">Status</label>
+                <select asp-for="Status" class="form-select form-select-sm" asp-items="Html.GetEnumSelectList<ChequeStatus>()">
+                    <option value="">All</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label form-label-sm">Page size</label>
+                <select asp-for="PageSize" class="form-select form-select-sm">
+                    <option value="10">10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                </select>
+            </div>
+            <div class="col-md-6 d-flex gap-2 align-items-center justify-content-end">
+                <button type="submit" class="btn btn-primary btn-sm">
+                    <i class="bi bi-funnel me-1"></i>Apply Filters
+                </button>
+                <a asp-action="Index" class="btn btn-outline-secondary btn-sm">
+                    <i class="bi bi-x-circle me-1"></i>Clear
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card mb-3">
+    <div class="card-body">
+        <h6>Bulk Import (Excel)</h6>
+        <p class="text-muted mb-2">Use the template row as a guide. PayeeName and AccountNumber must match existing records exactly (case-insensitive). Status: Issued, Cleared, Cancelled, PostDated.</p>
+        <div class="d-flex flex-wrap gap-2 align-items-center">
+            <a asp-action="DownloadImportTemplate" class="btn btn-outline-secondary btn-sm">
+                <i class="bi bi-download me-1"></i>Download template
+            </a>
+            <form asp-action="ImportExcel" method="post" enctype="multipart/form-data" class="d-flex gap-2 flex-grow-1 flex-wrap">
+                <input type="file" name="file" class="form-control" accept=".xlsx,.xls" required />
+                <button class="btn btn-success btn-sm">
+                    <i class="bi bi-upload me-1"></i>Import
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="d-flex justify-content-between align-items-center mb-2">
+    <div>
+        <span class="badge rounded-pill text-bg-light border">
+            @if (Model.TotalCount == 0)
+            {
+                <span>No cheques found</span>
+            }
+            else
+            {
+                <span>Showing page <b>@Model.Page</b> of <b>@Model.TotalPages</b> (@Model.TotalCount total)</span>
+            }
+        </span>
+    </div>
+</div>
+
+<table class="table table-striped table-bordered table-sm">
+    <thead><tr><th>#</th><th>Date</th><th>Payee</th><th>Amount</th><th>Account</th><th>Status</th><th></th></tr></thead>
+    <tbody>
+    @foreach (var c in Model.Rows)
+    {
+        <tr>
+            <td>@c.ChequeNumber</td><td>@c.Date</td><td>@c.PayeeName</td><td>@c.Amount.ToString("N2")</td><td>@c.BankAccountNumber</td><td>@c.Status</td>
+            <td>
+                <a asp-action="Print" asp-route-id="@c.Id" class="btn btn-sm btn-outline-secondary">
+                    <i class="bi bi-printer me-1"></i>Print
+                </a>
+                <form asp-action="Cancel" method="post" class="d-inline">
+                    <input type="hidden" name="id" value="@c.Id" />
+                    <input type="hidden" name="reason" value="Cancelled from list" />
+                    <button class="btn btn-sm btn-outline-danger">
+                        <i class="bi bi-x-circle me-1"></i>Cancel
+                    </button>
+                </form>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+@if (Model.TotalPages > 1)
+{
+    <nav aria-label="Cheque pagination">
+        <ul class="pagination pagination-sm justify-content-end">
+            <li class="page-item @(Model.Page <= 1 ? "disabled" : "")">
+                <a class="page-link"
+                   asp-action="Index"
+                   asp-route-page="@(Model.Page - 1)"
+                   asp-route-pageSize="@Model.PageSize"
+                   asp-route-FromDate="@(Model.FromDate?.ToString("yyyy-MM-dd"))"
+                   asp-route-ToDate="@(Model.ToDate?.ToString("yyyy-MM-dd"))"
+                   asp-route-PayeeName="@Model.PayeeName"
+                   asp-route-BankAccountNumber="@Model.BankAccountNumber"
+                   asp-route-ChequeNumber="@Model.ChequeNumber"
+                   asp-route-Status="@Model.Status">
+                    <i class="bi bi-chevron-left"></i>
+                </a>
+            </li>
+
+            <li class="page-item disabled">
+                <span class="page-link">
+                    Page <b>@Model.Page</b> / @Model.TotalPages
+                </span>
+            </li>
+
+            <li class="page-item @(Model.Page >= Model.TotalPages ? "disabled" : "")">
+                <a class="page-link"
+                   asp-action="Index"
+                   asp-route-page="@(Model.Page + 1)"
+                   asp-route-pageSize="@Model.PageSize"
+                   asp-route-FromDate="@(Model.FromDate?.ToString("yyyy-MM-dd"))"
+                   asp-route-ToDate="@(Model.ToDate?.ToString("yyyy-MM-dd"))"
+                   asp-route-PayeeName="@Model.PayeeName"
+                   asp-route-BankAccountNumber="@Model.BankAccountNumber"
+                   asp-route-ChequeNumber="@Model.ChequeNumber"
+                   asp-route-Status="@Model.Status">
+                    <i class="bi bi-chevron-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+}

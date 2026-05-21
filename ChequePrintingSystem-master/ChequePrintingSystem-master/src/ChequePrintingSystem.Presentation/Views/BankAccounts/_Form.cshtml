@@ -1,0 +1,38 @@
+@model BankAccountFormViewModel
+<form method="post" class="row g-2">
+    <input type="hidden" asp-for="Id" />
+    <div class="col-md-4">
+        <label asp-for="BankId"></label>
+        <select asp-for="BankId" asp-items="ViewBag.Banks" class="form-select"></select>
+    </div>
+    <div class="col-md-4">
+        <label asp-for="AccountNumber"></label>
+        <input asp-for="AccountNumber" class="form-control" />
+        <span asp-validation-for="AccountNumber" class="text-danger"></span>
+    </div>
+    <div class="col-md-4">
+        <label asp-for="OpeningBalance"></label>
+        <input asp-for="OpeningBalance" class="form-control" />
+    </div>
+
+    <div class="col-md-3"><label asp-for="DateX"></label><input asp-for="DateX" class="form-control" /></div>
+    <div class="col-md-3"><label asp-for="DateY"></label><input asp-for="DateY" class="form-control" /></div>
+    <div class="col-md-3"><label asp-for="PayeeX"></label><input asp-for="PayeeX" class="form-control" /></div>
+    <div class="col-md-3"><label asp-for="PayeeY"></label><input asp-for="PayeeY" class="form-control" /></div>
+
+    <div class="col-md-3"><label asp-for="AmountNumericX"></label><input asp-for="AmountNumericX" class="form-control" /></div>
+    <div class="col-md-3"><label asp-for="AmountNumericY"></label><input asp-for="AmountNumericY" class="form-control" /></div>
+    <div class="col-md-3"><label asp-for="AmountWordsX"></label><input asp-for="AmountWordsX" class="form-control" /></div>
+    <div class="col-md-3"><label asp-for="AmountWordsY"></label><input asp-for="AmountWordsY" class="form-control" /></div>
+
+    <div class="col-12">
+        <label asp-for="TemplateCss"></label>
+        <textarea asp-for="TemplateCss" rows="4" class="form-control"></textarea>
+        <span asp-validation-for="TemplateCss" class="text-danger"></span>
+    </div>
+
+    <div class="col-12">
+        <button class="btn btn-primary">Save</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+    </div>
+</form>

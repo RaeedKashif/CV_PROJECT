@@ -1,0 +1,114 @@
+@using ChequePrintingSystem.Domain.Enums
+@model ReportFilterViewModel
+<h4>Reports</h4>
+<form method="get" class="row g-2 mb-3">
+    <input type="hidden" name="Page" value="1" />
+    <div class="col-md-2"><label>From</label><input asp-for="FromDate" class="form-control" /></div>
+    <div class="col-md-2"><label>To</label><input asp-for="ToDate" class="form-control" /></div>
+    <div class="col-md-2"><label>Cheque #</label><input asp-for="ChequeNumber" class="form-control" placeholder="Contains..." /></div>
+    <div class="col-md-3"><label>Payee</label><input asp-for="PayeeName" class="form-control" /></div>
+    <div class="col-md-3"><label>Bank Account</label><input asp-for="BankAccountNumber" class="form-control" /></div>
+    <div class="col-md-2">
+        <label>Status</label>
+        <select asp-for="Status" class="form-select" asp-items="Html.GetEnumSelectList<ChequeStatus>()">
+            <option value="">All</option>
+        </select>
+    </div>
+    <div class="col-12 d-flex flex-wrap align-items-center gap-2">
+        <button type="submit" class="btn btn-primary btn-sm">
+            <i class="bi bi-funnel me-1"></i>Apply Filters
+        </button>
+        <select asp-for="PageSize" class="form-select form-select-sm d-inline w-auto" style="min-width: 120px;">
+            <option value="10">10 / page</option>
+            <option value="25">25 / page</option>
+            <option value="50">50 / page</option>
+        </select>
+        <a asp-action="ExportExcel"
+           asp-route-FromDate="@(Model.FromDate?.ToString("yyyy-MM-dd"))"
+           asp-route-ToDate="@(Model.ToDate?.ToString("yyyy-MM-dd"))"
+           asp-route-ChequeNumber="@Model.ChequeNumber"
+           asp-route-PayeeName="@Model.PayeeName"
+           asp-route-BankAccountNumber="@Model.BankAccountNumber"
+           asp-route-Status="@Model.Status"
+           class="btn btn-success btn-sm">
+            <i class="bi bi-file-earmark-excel me-1"></i>Export Excel
+        </a>
+        <a asp-action="ExportPdf"
+           asp-route-FromDate="@(Model.FromDate?.ToString("yyyy-MM-dd"))"
+           asp-route-ToDate="@(Model.ToDate?.ToString("yyyy-MM-dd"))"
+           asp-route-ChequeNumber="@Model.ChequeNumber"
+           asp-route-PayeeName="@Model.PayeeName"
+           asp-route-BankAccountNumber="@Model.BankAccountNumber"
+           asp-route-Status="@Model.Status"
+           class="btn btn-danger btn-sm">
+            <i class="bi bi-file-earmark-pdf me-1"></i>Export PDF
+        </a>
+    </div>
+</form>
+<div class="mb-3">
+    <span class="badge text-bg-danger">Cancelled: @ViewBag.CancelledCount</span>
+    <span class="badge text-bg-warning">Pending: @ViewBag.PendingCount</span>
+    <span class="badge text-bg-success">Cleared: @ViewBag.ClearedCount</span>
+</div>
+<div class="mb-2">
+    @if (Model.TotalCount == 0)
+    {
+        <span class="text-muted">No results found.</span>
+    }
+    else
+    {
+        <span class="text-muted">
+            Showing page <b>@Model.Page</b> of <b>@Model.TotalPages</b> (@Model.TotalCount total)
+        </span>
+    }
+</div>
+<table class="table table-bordered table-sm">
+    <thead><tr><th>Date</th><th>Cheque</th><th>Payee</th><th>Amount</th><th>Status</th><th>Remarks</th></tr></thead>
+    <tbody>
+    @foreach (var row in Model.Rows)
+    {
+        <tr><td>@row.Date</td><td>@row.ChequeNumber</td><td>@row.PayeeName</td><td>@row.Amount.ToString("N2")</td><td>@row.Status</td><td>@(row.Remarks ?? "")</td></tr>
+    }
+    </tbody>
+</table>
+
+@if (Model.TotalPages > 1)
+{
+    <nav aria-label="Report pagination">
+        <ul class="pagination pagination-sm justify-content-end">
+            <li class="page-item @(Model.Page <= 1 ? "disabled" : "")">
+                <a class="page-link"
+                   asp-action="Index"
+                   asp-route-page="@(Model.Page - 1)"
+                   asp-route-pageSize="@Model.PageSize"
+                   asp-route-FromDate="@(Model.FromDate?.ToString("yyyy-MM-dd"))"
+                   asp-route-ToDate="@(Model.ToDate?.ToString("yyyy-MM-dd"))"
+                   asp-route-ChequeNumber="@Model.ChequeNumber"
+                   asp-route-PayeeName="@Model.PayeeName"
+                   asp-route-BankAccountNumber="@Model.BankAccountNumber"
+                   asp-route-Status="@Model.Status">
+                    <i class="bi bi-chevron-left"></i>
+                </a>
+            </li>
+            <li class="page-item disabled">
+                <span class="page-link">
+                    Page <b>@Model.Page</b> / @Model.TotalPages
+                </span>
+            </li>
+            <li class="page-item @(Model.Page >= Model.TotalPages ? "disabled" : "")">
+                <a class="page-link"
+                   asp-action="Index"
+                   asp-route-page="@(Model.Page + 1)"
+                   asp-route-pageSize="@Model.PageSize"
+                   asp-route-FromDate="@(Model.FromDate?.ToString("yyyy-MM-dd"))"
+                   asp-route-ToDate="@(Model.ToDate?.ToString("yyyy-MM-dd"))"
+                   asp-route-ChequeNumber="@Model.ChequeNumber"
+                   asp-route-PayeeName="@Model.PayeeName"
+                   asp-route-BankAccountNumber="@Model.BankAccountNumber"
+                   asp-route-Status="@Model.Status">
+                    <i class="bi bi-chevron-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+}

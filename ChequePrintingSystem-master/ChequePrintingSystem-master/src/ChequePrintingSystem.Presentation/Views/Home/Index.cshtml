@@ -1,0 +1,58 @@
+﻿@{
+    ViewData["Title"] = "Smart Cheque Operations";
+}
+
+<section class="landing-hero rounded-4 p-5 mb-4">
+    <div class="row align-items-center g-4">
+        <div class="col-lg-7">
+            <span class="badge text-bg-light mb-3">Enterprise Cheque Management</span>
+            <h1 class="display-5 fw-bold mb-3">Secure, accurate, and audit-ready cheque operations</h1>
+            <p class="lead text-secondary mb-4">
+                Streamline cheque issuing, post-dated tracking, printing templates, approvals, and reporting
+                through a central workflow built for finance teams.
+            </p>
+            <div class="d-flex gap-2">
+                <a asp-controller="Auth" asp-action="Login" class="btn btn-primary btn-lg px-4">Sign In</a>
+                <a href="#features" class="btn btn-outline-secondary btn-lg px-4">Explore Features</a>
+            </div>
+        </div>
+        <div class="col-lg-5">
+            <div class="stats-panel shadow-sm">
+                <h6 class="text-muted mb-3">Operational Benefits</h6>
+                <div class="stats-item"><span>Role-based controls</span><strong>Admin / Accountant / Viewer</strong></div>
+                <div class="stats-item"><span>Cheque output precision</span><strong>Template coordinates</strong></div>
+                <div class="stats-item"><span>Audit & traceability</span><strong>Full activity logs</strong></div>
+                <div class="stats-item"><span>Export-ready analytics</span><strong>Excel + PDF reports</strong></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="features" class="mb-4">
+    <div class="row g-3">
+        <div class="col-md-4">
+            <div class="card feature-card h-100">
+                <div class="card-body">
+                    <h5>Bank & Account Controls</h5>
+                    <p class="text-secondary mb-0">Manage multiple bank accounts with cheque field coordinates and custom template settings.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card feature-card h-100">
+                <div class="card-body">
+                    <h5>Cheque Lifecycle</h5>
+                    <p class="text-secondary mb-0">Issue, clear, cancel, and track post-dated cheques with attachment and audit support.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card feature-card h-100">
+                <div class="card-body">
+                    <h5>Reporting & Insights</h5>
+                    <p class="text-secondary mb-0">Filter reports by payee, status, and date ranges with one-click PDF/Excel export.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

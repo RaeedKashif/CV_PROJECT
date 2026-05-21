@@ -1,0 +1,21 @@
+@model DashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+<div class="row g-3">
+    <div class="col-md-3"><div class="card"><div class="card-body"><h6>Total Cheques</h6><h3>@Model.Data.TotalCheques</h3></div></div></div>
+    <div class="col-md-3"><div class="card"><div class="card-body"><h6>Cleared Amount</h6><h3>@Model.Data.TotalClearedAmount.ToString("N2")</h3></div></div></div>
+    <div class="col-md-3"><div class="card"><div class="card-body"><h6>Pending</h6><h3>@Model.Data.PendingCheques</h3></div></div></div>
+    <div class="col-md-3"><div class="card"><div class="card-body"><h6>Upcoming PDC</h6><h3>@Model.Data.UpcomingPdcCount</h3></div></div></div>
+</div>
+<hr />
+<h5>Bank Balances</h5>
+<table class="table table-striped">
+    <thead><tr><th>Bank</th><th>Balance</th></tr></thead>
+    <tbody>
+    @foreach (var bank in Model.Data.BankBalances)
+    {
+        <tr><td>@bank.Key</td><td>@bank.Value.ToString("N2")</td></tr>
+    }
+    </tbody>
+</table>
